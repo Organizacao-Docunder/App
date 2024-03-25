@@ -23,7 +23,7 @@ export class UserController {
       createUserDto.email,
     );
     if (existingUser) {
-      return { errors: ['O email já está em uso.'] };
+      return { errors: ['The email is already in use.'] };
     }
     return await this.userService.create(createUserDto);
   }
@@ -37,14 +37,14 @@ export class UserController {
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.userService.findById(+id);
     if (!user) {
-      return { errors: ['Usuário não encontrado.'] };
+      return { errors: ['User not found.'] };
     }
 
     const existingUser = await this.userService.findByEmail(
       updateUserDto.email,
     );
     if (existingUser && existingUser.id !== +id) {
-      return { errors: ['O email já está em uso.'] };
+      return { errors: ['The email is already in use.'] };
     }
 
     const updatedUser = await this.userService.update(+id, updateUserDto);
@@ -56,13 +56,11 @@ export class UserController {
   async delete(@Param('id') id: string) {
     const user = await this.userService.findById(+id);
     if (!user) {
-      return { errors: ['Usuário não encontrado.'] };
+      return { errors: ['User not found.'] };
     }
     await this.userService.delete(+id);
     return {
-      message: [
-        'Usuário deletado com sucesso! Faça login ou crie sua conta novamente.',
-      ],
+      message: ['User deleted successfully'],
     };
   }
 }
