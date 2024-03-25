@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
 } from '@nestjs/common';
@@ -18,6 +19,12 @@ export class UserController {
   @IsPublic()
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
+    const existingUser = await this.userService.findByEmail(
+      createUserDto.email,
+    );
+    if (existingUser) {
+      return { errors: ['O email já está em uso.'] };
+    }
     return await this.userService.create(createUserDto);
   }
 
@@ -26,7 +33,7 @@ export class UserController {
     return await this.userService.findAll();
   }
 
-  @Put(':id')
+  @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const user = await this.userService.findById(+id);
     if (!user) {
@@ -52,6 +59,10 @@ export class UserController {
       return { errors: ['Usuário não encontrado.'] };
     }
     await this.userService.delete(+id);
-    return 'Usuário deletado com sucesso! Faça login ou crie sua conta novamente.';
+    return {
+      message: [
+        'Usuário deletado com sucesso! Faça login ou crie sua conta novamente.',
+      ],
+    };
   }
 }
