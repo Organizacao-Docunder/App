@@ -33,7 +33,7 @@ export class AuthService {
     const user = await this.userService.findByEmail(email);
 
     if (user) {
-      const isPasswordValid = comparePasswords(password, user.password);
+      const isPasswordValid = await comparePasswords(password, user.password);
 
       if (isPasswordValid) {
         return {
