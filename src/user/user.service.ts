@@ -26,20 +26,20 @@ export class UserService {
     };
   }
 
-  findByEmail(email: string) {
-    return this.prisma.user.findUnique({
+  async findByEmail(email: string) {
+    return await this.prisma.user.findUnique({
       where: { email },
     });
   }
 
-  findById(id: number) {
-    return this.prisma.user.findUnique({
+  async findById(id: number) {
+    return await this.prisma.user.findUnique({
       where: { id },
     });
   }
 
   async findAll(): Promise<UserFromJwt[]> {
-    return this.prisma.user.findMany({
+    return await this.prisma.user.findMany({
       select: {
         id: true,
         name: true,
