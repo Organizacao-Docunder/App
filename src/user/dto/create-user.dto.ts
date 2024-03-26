@@ -10,14 +10,13 @@ import {
 } from 'class-validator';
 
 export class CreateUserDto extends User {
-  @IsEmail()
   @IsNotEmpty()
   @MinLength(6)
   @MaxLength(74, { message: 'Email must be at most 74 characters long.' })
+  @IsEmail({ ignore_max_length: true })
   email: string;
 
   @IsString()
-  @IsNotEmpty()
   @MinLength(6)
   @MaxLength(74)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
