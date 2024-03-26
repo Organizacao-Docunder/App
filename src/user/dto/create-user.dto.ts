@@ -13,7 +13,7 @@ export class CreateUserDto extends User {
   @IsEmail()
   @IsNotEmpty()
   @MinLength(6)
-  @MaxLength(74)
+  @MaxLength(74, { message: 'Email must be at most 74 characters long.' })
   email: string;
 
   @IsString()
@@ -21,7 +21,7 @@ export class CreateUserDto extends User {
   @MinLength(6)
   @MaxLength(74)
   @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    message: 'password too weak',
+    message: 'Password Too Weak',
   })
   password: string;
 
@@ -29,6 +29,8 @@ export class CreateUserDto extends User {
   @MaxLength(74)
   @IsString()
   @IsNotEmpty()
-  @IsAlpha()
+  @Matches(/^[a-zA-Z\s]+$/, {
+    message: 'The name should only contain letters and spaces.',
+  })
   name: string;
 }
