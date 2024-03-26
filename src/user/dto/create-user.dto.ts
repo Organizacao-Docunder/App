@@ -29,7 +29,7 @@ export class CreateUserDto extends User {
   @MaxLength(74)
   @IsString()
   @IsNotEmpty()
-  @Matches(/^[a-zA-Z\s]+$/, {
+  @Matches(/^[a-zA-Z\u00C0-\u017F\s]+$/, {
     message: 'The name should only contain letters and spaces.',
   })
   name: string;
