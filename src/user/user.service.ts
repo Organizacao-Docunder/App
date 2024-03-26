@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import * as bcrypt from 'bcrypt';
 import { User } from './entities/user.entity';
 import { UserFromJwt } from 'src/auth/models/UserFromJwt';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -30,9 +29,13 @@ export class UserService {
     return user;
   }
 
-  async updateUser(id: number, updateUserDto: UpdateUserDto) {
+  async updateUser(
+    id: number,
+    updateUserDto: UpdateUserDto,
+    currentUser: User,
+  ) {
     const user = await this.findById(id);
-    if (!user) {
+    if (!user || user.id != currentUser.id) {
       throw new NotFoundException('User not found');
     }
 
@@ -84,9 +87,9 @@ export class UserService {
     });
   }
 
-  async delete(id: number) {
+  async delete(id: number, currentUser: User) {
     const user = await this.findById(id);
-    if (!user) {
+    if (!user || user.id != currentUser.id) {
       throw new NotFoundException('User not found');
     }
     await this.prisma.user.delete({ where: { id } });

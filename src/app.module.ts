@@ -6,8 +6,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { CheckJsonInterceptor } from './auth/interceptors/check-json-interceptor.interceptor';
 
 @Module({
   imports: [UserModule, AuthModule, ConfigModule.forRoot()],
@@ -17,10 +15,6 @@ import { CheckJsonInterceptor } from './auth/interceptors/check-json-interceptor
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
-    },
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: CheckJsonInterceptor,
     },
   ],
 })

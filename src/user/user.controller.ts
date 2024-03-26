@@ -11,6 +11,9 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
 import { IsPublic } from 'src/auth/decorators/is-public.decorator';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import { User } from './entities/user.entity';
+import { CheckJson } from 'src/auth/decorators/check-json.decorator';
 
 @Controller('user')
 export class UserController {
@@ -18,7 +21,7 @@ export class UserController {
 
   @IsPublic()
   @Post()
-  async create(@Body() createUserDto: CreateUserDto) {
+  async create(@CheckJson() data: any, @Body() createUserDto: CreateUserDto) {
     const existingUser = await this.userService.findByEmail(
       createUserDto.email,
     );
@@ -34,14 +37,23 @@ export class UserController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    const updatedUser = await this.userService.updateUser(+id, updateUserDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser() currentUser: User,
+    @CheckJson() data: any,
+  ) {
+    const updatedUser = await this.userService.updateUser(
+      +id,
+      updateUserDto,
+      currentUser,
+    );
     return updatedUser;
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: string) {
-    await this.userService.delete(+id);
+  async delete(@Param('id') id: string, @CurrentUser() currentUser: User) {
+    await this.userService.delete(+id, currentUser);
     return { message: ['User deleted successfully'] };
   }
 }
