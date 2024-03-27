@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -63,6 +64,9 @@ export class UserService {
   }
 
   async findByEmail(email: string) {
+    if (!email) {
+      throw new BadRequestException('E-mail is required.');
+    }
     return await this.prisma.user.findUnique({
       where: { email },
     });
