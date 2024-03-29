@@ -1,11 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import * as bcrypt from 'bcrypt';
-import { UnauthorizedError } from 'src/auth/errors/unauthorized.error';
 import { User } from 'src/user/entities/user.entity';
 import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
 import { UserToken } from './models/UserToken';
+import { comparePasswords } from 'src/utils/bcrypt-utils';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +31,7 @@ export class AuthService {
     const user = await this.userService.findByEmail(email);
 
     if (user) {
-      const isPasswordValid = await bcrypt.compare(password, user.password);
+      const isPasswordValid = await comparePasswords(password, user.password);
 
       if (isPasswordValid) {
         return {
@@ -42,7 +41,7 @@ export class AuthService {
       }
     }
 
-    throw new UnauthorizedError(
+    throw new UnauthorizedException(
       'Email address or password provided is incorrect.',
     );
   }
