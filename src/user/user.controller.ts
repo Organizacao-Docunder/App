@@ -28,7 +28,7 @@ export class UserController {
     if (existingUser) {
       return { errors: ['The email is already in use.'] };
     }
-    return await this.userService.create(createUserDto);
+    return await this.userService.createUser(createUserDto);
   }
 
   @Get()
@@ -53,7 +53,7 @@ export class UserController {
 
   @Delete(':id')
   async delete(@Param('id') id: string, @CurrentUser() currentUser: User) {
-    await this.userService.delete(+id, currentUser);
+    await this.userService.deleteUser(+id, currentUser);
     return { message: ['User deleted successfully'] };
   }
 }
