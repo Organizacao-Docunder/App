@@ -15,18 +15,15 @@ import { hashPassword } from 'src/utils/bcrypt-utils';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto) {
     const hashedPassword = await hashPassword(createUserDto.password);
 
     const data = {
       ...createUserDto,
       password: hashedPassword,
     };
-
     const createdUser = await this.prisma.user.create({ data });
-
     const { password, createdAt, updatedAt, ...user } = createdUser;
-
     return user;
   }
 
@@ -91,7 +88,7 @@ export class UserService {
     });
   }
 
-  async delete(id: number, currentUser: User) {
+  async deleteUser(id: number, currentUser: User) {
     const user = await this.findById(id);
     if (!user || user.id != currentUser.id) {
       throw new NotFoundException('User not found');
