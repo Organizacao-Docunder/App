@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class DocumentService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(createDocumentDto: CreateDocumentDto) {
+  async createDocument(createDocumentDto: CreateDocumentDto) {
     const data = {
       ...createDocumentDto,
     };
