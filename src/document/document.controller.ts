@@ -18,7 +18,7 @@ export class DocumentController {
 
   @Post()
   async create(@Body() createDocumentDto: CreateDocumentDto) {
-    return await this.documentService.createUser(createDocumentDto);
+    return await this.documentService.createDocument(createDocumentDto);
   }
 
   @Get()
