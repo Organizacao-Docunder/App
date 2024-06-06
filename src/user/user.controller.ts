@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -26,7 +27,8 @@ export class UserController {
       createUserDto.email,
     );
     if (existingUser) {
-      return { errors: ['The email is already in use.'] };
+      throw new ConflictException({message: 'The email is already in use'});
+      // return { errors: ['The email is already in use.'] };
     }
     return await this.userService.createUser(createUserDto);
   }
