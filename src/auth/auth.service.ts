@@ -4,7 +4,7 @@ import { User } from 'src/user/entities/user.entity';
 import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
 import { UserToken } from './models/UserToken';
-import { comparePasswords } from 'src/utils/bcrypt-utils';
+import { compareText as comparePasswords } from 'src/utils/bcrypt-utils';
 
 @Injectable()
 export class AuthService {

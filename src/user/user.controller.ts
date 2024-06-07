@@ -1,5 +1,6 @@
 import {
   Body,
+  ConflictException,
   Controller,
   Delete,
   Get,
@@ -14,6 +15,7 @@ import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { CheckJson } from 'src/auth/decorators/check-json.decorator';
+import { SecretQuestion } from './types/SecretQuestion';
 
 @Controller('user')
 export class UserController {
@@ -21,14 +23,18 @@ export class UserController {
 
   @IsPublic()
   @Post()
-  async create(@CheckJson() data: any, @Body() createUserDto: CreateUserDto) {
+  async create(
+    @CheckJson() data: any,
+    @Body() createUserDto: CreateUserDto,
+    @Body('secretAnswers') secretAnswers: SecretQuestion[],
+  ) {
     const existingUser = await this.userService.findByEmail(
       createUserDto.email,
     );
     if (existingUser) {
-      return { errors: ['The email is already in use.'] };
+      throw new ConflictException('The email is already in use');
     }
-    return await this.userService.createUser(createUserDto);
+    return await this.userService.createUser(createUserDto, secretAnswers);
   }
 
   @Get()

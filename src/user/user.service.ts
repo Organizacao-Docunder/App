@@ -9,20 +9,35 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserFromJwt } from 'src/auth/models/UserFromJwt';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { hashPassword } from 'src/utils/bcrypt-utils';
+import { hashText } from 'src/utils/bcrypt-utils';
+import { SecretQuestion } from './types/SecretQuestion';
+import { hashSecretQuestions } from 'src/utils/hashSecretQuestions';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createUser(createUserDto: CreateUserDto) {
-    const hashedPassword = await hashPassword(createUserDto.password);
+  async createUser(
+    createUserDto: CreateUserDto,
+    secretQuestions: SecretQuestion[],
+  ) {
+    const hashedPassword = await hashText(createUserDto.password);
+    const hashedAnswer = await hashSecretQuestions(secretQuestions);
 
-    const data = {
-      ...createUserDto,
-      password: hashedPassword,
-    };
-    const createdUser = await this.prisma.user.create({ data });
+    const createdUser = await this.prisma.user.create({
+      data: {
+        email: createUserDto.email,
+        password: hashedPassword,
+        name: createUserDto.name,
+        secretAnswers: {
+          create: hashedAnswer.map((answer) => ({
+            questionId: answer.questionId,
+            encryptedAnswer: answer.hashedAnswer,
+          })),
+        },
+      },
+    });
+
     const { password, createdAt, updatedAt, ...user } = createdUser;
     return user;
   }
@@ -46,18 +61,18 @@ export class UserService {
 
     let hashedPassword = user.password;
     if (updateUserDto.password) {
-      hashedPassword = await hashPassword(updateUserDto.password);
+      hashedPassword = await hashText(updateUserDto.password);
     }
 
-    const updatedUser = await this.prisma.user.update({
-      where: { id },
-      data: {
-        ...updateUserDto,
-        password: hashedPassword,
-      },
-    });
-    const { password, createdAt, updatedAt, ...updatedUserData } = updatedUser;
-    return updatedUserData;
+    // const updatedUser = await this.prisma.user.update({
+    //   where: { id },
+    //   data: {
+    //     ...updateUserDto,
+    //     password: hashedPassword,
+    //   },
+    // });
+    // const { password, createdAt, updatedAt, ...updatedUserData } = updatedUser;
+    // return updatedUserData;
   }
 
   async findByEmail(email: string) {
