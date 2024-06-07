@@ -10,7 +10,7 @@ import { User } from './entities/user.entity';
 import { UserFromJwt } from 'src/auth/models/UserFromJwt';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { hashText } from 'src/utils/bcrypt-utils';
-import { SecretQuestion } from './types/SecretQuestion';
+import { SecretQuestion } from './interfaces/SecretQuestion';
 import { hashSecretQuestions } from 'src/utils/hashSecretQuestions';
 
 @Injectable()
@@ -64,15 +64,15 @@ export class UserService {
       hashedPassword = await hashText(updateUserDto.password);
     }
 
-    // const updatedUser = await this.prisma.user.update({
-    //   where: { id },
-    //   data: {
-    //     ...updateUserDto,
-    //     password: hashedPassword,
-    //   },
-    // });
-    // const { password, createdAt, updatedAt, ...updatedUserData } = updatedUser;
-    // return updatedUserData;
+    const updatedUser = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...updateUserDto,
+        password: hashedPassword,
+      },
+    });
+    const { password, createdAt, updatedAt, ...updatedUserData } = updatedUser;
+    return updatedUserData;
   }
 
   async findByEmail(email: string) {

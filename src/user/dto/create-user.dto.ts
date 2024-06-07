@@ -1,6 +1,5 @@
 import { User } from '../entities/user.entity';
 import {
-  IsAlpha,
   IsArray,
   IsEmail,
   IsNotEmpty,
@@ -9,7 +8,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { SecretQuestion } from '../types/SecretQuestion';
+import { SecretQuestion } from '../interfaces/SecretQuestion';
 
 export class CreateUserDto extends User {
   @IsNotEmpty()

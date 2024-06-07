@@ -1,4 +1,4 @@
-import { SecretQuestion } from 'src/user/types/SecretQuestion';
+import { SecretQuestion } from 'src/user/interfaces/SecretQuestion';
 import { hashText } from './bcrypt-utils';
 
 export const hashSecretQuestions = async (
@@ -11,9 +11,8 @@ export const hashSecretQuestions = async (
   const hashedAnswers = await Promise.all(
     questions.map(async (question) => ({
       questionId: question.questionId,
-      hashedAnswer: await hashText(question.answer),
+      hashedAnswer: await hashText(question.answer.toLowerCase()),
     })),
   );
-
   return hashedAnswers;
 };

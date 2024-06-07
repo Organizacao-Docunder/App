@@ -1,6 +1,7 @@
 import {
   Body,
   ConflictException,
+  BadRequestException,
   Controller,
   Delete,
   Get,
@@ -15,7 +16,7 @@ import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { CheckJson } from 'src/auth/decorators/check-json.decorator';
-import { SecretQuestion } from './types/SecretQuestion';
+import { SecretQuestion } from './interfaces/SecretQuestion';
 
 @Controller('user')
 export class UserController {
@@ -31,9 +32,15 @@ export class UserController {
     const existingUser = await this.userService.findByEmail(
       createUserDto.email,
     );
+
     if (existingUser) {
       throw new ConflictException('The email is already in use');
     }
+
+    if (!secretAnswers || secretAnswers.length !== 3) {
+      throw new BadRequestException('Three secret questions are required.');
+    }
+
     return await this.userService.createUser(createUserDto, secretAnswers);
   }
 
