@@ -4,7 +4,7 @@ export class Document {
   content: string;
 
   // constructor(
-  //   private id: string, 
+  //   private id: string,
   //   protected creatorId: string,
   //   protected content: string,
   //   private createdAt: string,
@@ -25,7 +25,7 @@ export class Document {
   // public setContent(value: string): void{
   //   this.content = value
   // }
-  
+
   // public getCreatedAt():string{
   //   return this.createdAt
   // }
