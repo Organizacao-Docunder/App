@@ -75,7 +75,10 @@ export class UserController {
 
   @IsPublic()
   @Post('recover-password')
-  async recoverPassword(@Body() recoverPasswordDto: RecoverPasswordDto) {
+  async recoverPassword(
+    @Body() recoverPasswordDto: RecoverPasswordDto,
+    @CheckJson() data: any,
+  ) {
     return this.userService.recoverPassword(recoverPasswordDto.email);
   }
 
@@ -83,13 +86,17 @@ export class UserController {
   @Post('verify-secret-answer')
   async verifySecretAnswer(
     @Body() verifySecretAnswerDto: VerifySecretAnswerDto,
+    @CheckJson() data: any,
   ) {
     return this.userService.verifySecretAnswer(verifySecretAnswerDto);
   }
 
   @IsPublic()
   @Post('reset-password')
-  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+    @CheckJson() data: any,
+  ) {
     return this.userService.resetPassword(resetPasswordDto);
   }
 }
