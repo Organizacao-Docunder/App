@@ -9,9 +9,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { User } from './entities/user.entity';
 import { UserFromJwt } from 'src/auth/models/UserFromJwt';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { hashText } from 'src/utils/bcrypt-utils';
+import { compareText, hashText } from 'src/utils/bcrypt-utils';
 import { SecretQuestion } from './interfaces/SecretQuestion';
 import { hashSecretQuestions } from 'src/utils/hashSecretQuestions';
+import { RecoverPasswordDto } from './dto/recover-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifySecretAnswerDto } from './dto/verify-secret-answer.dto';
 
 @Injectable()
 export class UserService {
@@ -109,5 +112,68 @@ export class UserService {
       throw new NotFoundException('User not found');
     }
     await this.prisma.user.delete({ where: { id } });
+  }
+
+  async recoverPassword(email: string) {
+    const user = await this.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const questions = await this.prisma.secretQuestion.findMany({
+      where: {
+        secretAnswer: {
+          some: {
+            userId: user.id,
+          },
+        },
+      },
+    });
+
+    return questions;
+  }
+
+  async verifySecretAnswer(verifySecretAnswerDto: VerifySecretAnswerDto) {
+    const user = await this.findByEmail(verifySecretAnswerDto.email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const answer = await this.prisma.secretAnswer.findUnique({
+      where: {
+        userId_questionId: {
+          userId: user.id,
+          questionId: Number(verifySecretAnswerDto.questionId),
+        },
+      },
+    });
+
+    if (
+      !answer ||
+      !(await compareText(
+        verifySecretAnswerDto.answer.toLowerCase(),
+        answer.encryptedAnswer,
+      ))
+    ) {
+      throw new BadRequestException('Incorrect answer');
+    }
+
+    return { message: 'Answer verified. Proceed to reset password.' };
+  }
+
+  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+    const user = await this.findByEmail(resetPasswordDto.email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const hashedPassword = await hashText(resetPasswordDto.newPassword);
+
+    await this.prisma.user.update({
+      where: { email: resetPasswordDto.email },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Password reset successfully' };
   }
 }

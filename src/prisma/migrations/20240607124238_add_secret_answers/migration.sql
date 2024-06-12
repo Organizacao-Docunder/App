@@ -39,8 +39,3 @@ ALTER TABLE "SecretAnswer" ADD CONSTRAINT "SecretAnswer_userId_fkey" FOREIGN KEY
 
 -- AddForeignKey
 ALTER TABLE "SecretAnswer" ADD CONSTRAINT "SecretAnswer_questionId_fkey" FOREIGN KEY ("questionId") REFERENCES "SecretQuestion"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
-INSERT INTO "SecretQuestion" (question) VALUES
-('What is your mother''s maiden name?'),
-('What was the name of your first pet?'),
-('What was the name of your elementary school?');

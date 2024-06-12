@@ -17,6 +17,9 @@ import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { User } from './entities/user.entity';
 import { CheckJson } from 'src/auth/decorators/check-json.decorator';
 import { SecretQuestion } from './interfaces/SecretQuestion';
+import { RecoverPasswordDto } from './dto/recover-password.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifySecretAnswerDto } from './dto/verify-secret-answer.dto';
 
 @Controller('user')
 export class UserController {
@@ -68,5 +71,25 @@ export class UserController {
   async delete(@Param('id') id: string, @CurrentUser() currentUser: User) {
     await this.userService.deleteUser(+id, currentUser);
     return { message: ['User deleted successfully'] };
+  }
+
+  @IsPublic()
+  @Post('recover-password')
+  async recoverPassword(@Body() recoverPasswordDto: RecoverPasswordDto) {
+    return this.userService.recoverPassword(recoverPasswordDto.email);
+  }
+
+  @IsPublic()
+  @Post('verify-secret-answer')
+  async verifySecretAnswer(
+    @Body() verifySecretAnswerDto: VerifySecretAnswerDto,
+  ) {
+    return this.userService.verifySecretAnswer(verifySecretAnswerDto);
+  }
+
+  @IsPublic()
+  @Post('reset-password')
+  async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    return this.userService.resetPassword(resetPasswordDto);
   }
 }
