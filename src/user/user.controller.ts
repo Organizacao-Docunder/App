@@ -44,18 +44,6 @@ export class UserController {
       throw new BadRequestException('Three secret questions are required.');
     }
 
-    if (
-      !secretAnswers.every(
-        (questions) =>
-          Number(questions.questionId) >= 1 &&
-          Number(questions.questionId) <= 9,
-      )
-    ) {
-      throw new BadRequestException(
-        'The question ID must be unique and valid.',
-      );
-    }
-
     return await this.userService.createUser(createUserDto, secretAnswers);
   }
 

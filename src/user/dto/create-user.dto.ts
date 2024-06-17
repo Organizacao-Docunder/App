@@ -7,8 +7,11 @@ import {
   Matches,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
 import { SecretQuestion } from '../interfaces/SecretQuestion';
+import { Type } from 'class-transformer';
+import { CreateSecretQuestionsDto } from './create-questions.dto';
 
 export class CreateUserDto extends User {
   @IsNotEmpty()
@@ -36,5 +39,7 @@ export class CreateUserDto extends User {
 
   @IsArray()
   @IsNotEmpty()
-  secretAnswers: SecretQuestion[];
+  @ValidateNested({ each: true })
+  @Type(() => CreateSecretQuestionsDto)
+  secretAnswers: CreateSecretQuestionsDto[];
 }

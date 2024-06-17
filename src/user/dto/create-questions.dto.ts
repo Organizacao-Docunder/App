@@ -1,19 +1,15 @@
 import {
-  IsEmail,
   IsInt,
   IsNotEmpty,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
   MinLength,
+  MaxLength,
+  IsString,
+  Min,
+  Max,
 } from 'class-validator';
+import { SecretQuestion } from '../interfaces/SecretQuestion';
 
-export class VerifySecretAnswerDto {
-  @IsNotEmpty()
-  @IsEmail()
-  email: string;
-
+export class CreateSecretQuestionsDto implements SecretQuestion {
   @IsInt()
   @IsNotEmpty()
   @Min(1, { message: 'Question ID must be greater than or equal to 1.' })
