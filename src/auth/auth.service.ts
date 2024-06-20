@@ -3,6 +3,7 @@ import { UserService } from 'src/user/user.service';
 import { User } from 'src/user/entities/user.entity';
 import { UserPayload } from './models/UserPayload';
 import { JwtService } from '@nestjs/jwt';
+import { Response } from 'express';
 import { UserToken } from './models/UserToken';
 import { compareText as comparePasswords } from 'src/utils/bcrypt-utils';
 
@@ -13,7 +14,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  login(user: User): UserToken {
+  login(user: User, response: Response): void {
     const payload: UserPayload = {
       sub: user.id,
       email: user.email,
@@ -22,9 +23,19 @@ export class AuthService {
 
     const jwtToken = this.jwtService.sign(payload);
 
-    return {
-      access_token: jwtToken,
-    };
+    response.cookie('access_token', jwtToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 3600000, // 1 hora
+    });
+
+    response.send({
+      success: true,
+      id: user.id,
+      email: payload.email,
+      name: payload.name,
+    });
   }
 
   async validateUser(email: string, password: string) {
