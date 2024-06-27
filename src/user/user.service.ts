@@ -49,6 +49,9 @@ export class UserService {
     updateUserDto: UpdateUserDto,
     currentUser: User,
   ) {
+    if (!id || typeof id === 'string') {
+      throw new BadRequestException('Invalid ID');
+    }
     const user = await this.findById(id);
     if (!user || user.id != currentUser.id) {
       throw new NotFoundException('User not found');
@@ -87,6 +90,9 @@ export class UserService {
   }
 
   async findById(id: number) {
+    if (!id || typeof id === 'string') {
+      throw new BadRequestException('Invalid ID');
+    }
     return await this.prisma.user.findUnique({
       where: { id },
     });

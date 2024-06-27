@@ -54,7 +54,7 @@ export class UserController {
 
   @Patch(':id')
   async update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
     @CurrentUser() currentUser: User,
     @CheckJson() data: any,
