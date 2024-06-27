@@ -12,7 +12,6 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { compareText, hashText } from 'src/utils/bcrypt-utils';
 import { SecretQuestion } from './interfaces/SecretQuestion';
 import { hashSecretQuestions } from 'src/utils/hashSecretQuestions';
-import { RecoverPasswordDto } from './dto/recover-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifySecretAnswerDto } from './dto/verify-secret-answer.dto';
 

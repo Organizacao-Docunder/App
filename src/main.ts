@@ -6,8 +6,6 @@ import * as cookieParser from 'cookie-parser';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.use(cookieParser());
-  // Pipes
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
@@ -15,6 +13,7 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
+  app.use(cookieParser());
 
   await app.listen(3000);
 }
