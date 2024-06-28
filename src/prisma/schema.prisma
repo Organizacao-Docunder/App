@@ -26,9 +26,9 @@ model SecretQuestion {
 
 model SecretAnswer {
   id              Int            @id @default(autoincrement())
-  user            User           @relation(fields: [userId], references: [id])
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          Int
-  secretQuestion  SecretQuestion @relation(fields: [questionId], references: [id])
+  secretQuestion  SecretQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
   questionId      Int
   encryptedAnswer String
   createdAt       DateTime       @default(now())

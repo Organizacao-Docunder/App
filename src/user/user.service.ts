@@ -112,11 +112,16 @@ export class UserService {
   }
 
   async deleteUser(id: number, currentUser: User) {
+    if (!id || typeof id === 'string') {
+      throw new BadRequestException('Invalid ID');
+    }
     const user = await this.findById(id);
     if (!user || user.id != currentUser.id) {
       throw new NotFoundException('User not found');
     }
-    await this.prisma.user.delete({ where: { id } });
+    await this.prisma.user.delete({
+      where: { id: user.id },
+    });
   }
 
   async recoverPassword(email: string) {
