@@ -175,7 +175,7 @@ export class UserService {
       where: { id },
     });
   }
-
+  // Regras de verificação
   private async checkForExistingUser(email: string) {
     const existingUser = await this.findByEmail(email);
     if (existingUser) {
