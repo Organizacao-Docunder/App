@@ -32,18 +32,6 @@ export class UserController {
     @Body() createUserDto: CreateUserDto,
     @Body('secretAnswers') secretAnswers: SecretQuestion[],
   ) {
-    const existingUser = await this.userService.findByEmail(
-      createUserDto.email,
-    );
-
-    if (existingUser) {
-      throw new ConflictException('The email is already in use');
-    }
-
-    if (!secretAnswers || secretAnswers.length !== 3) {
-      throw new BadRequestException('Three secret questions are required.');
-    }
-
     return await this.userService.createUser(createUserDto, secretAnswers);
   }
 

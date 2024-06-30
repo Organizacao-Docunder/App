@@ -6,14 +6,14 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './entities/user.entity';
-import { UserFromJwt } from 'src/auth/models/UserFromJwt';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { compareText, hashText } from 'src/utils/bcrypt-utils';
-import { SecretQuestion } from './interfaces/SecretQuestion';
-import { hashSecretQuestions } from 'src/utils/hashSecretQuestions';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifySecretAnswerDto } from './dto/verify-secret-answer.dto';
+import { User } from './entities/user.entity';
+import { UserFromJwt } from 'src/auth/models/UserFromJwt';
+import { SecretQuestion } from './interfaces/SecretQuestion';
+import { compareText, hashText } from 'src/utils/bcrypt-utils';
+import { hashSecretQuestions } from 'src/utils/hashSecretQuestions';
 
 @Injectable()
 export class UserService {
@@ -21,10 +21,13 @@ export class UserService {
 
   async createUser(
     createUserDto: CreateUserDto,
-    secretQuestions: SecretQuestion[],
+    secretAnswers: SecretQuestion[],
   ) {
+    await this.checkForExistingUser(createUserDto.email);
+    this.validateSecretAnswers(secretAnswers);
+
     const hashedPassword = await hashText(createUserDto.password);
-    const hashedAnswer = await hashSecretQuestions(secretQuestions);
+    const hashedAnswer = await hashSecretQuestions(secretAnswers);
 
     const createdUser = await this.prisma.user.create({
       data: {
@@ -49,22 +52,14 @@ export class UserService {
     updateUserDto: UpdateUserDto,
     currentUser: User,
   ) {
-    if (!id || typeof id === 'string') {
-      throw new BadRequestException('Invalid ID');
-    }
-    const user = await this.findById(id);
-    if (!user || user.id != currentUser.id) {
-      throw new NotFoundException('User not found');
+    this.validateUserId(id);
+    await this.checkUserExists(id, currentUser);
+
+    if (updateUserDto.email !== currentUser.email) {
+      await this.checkForExistingUser(updateUserDto.email);
     }
 
-    if (updateUserDto.email !== user.email) {
-      const existingUser = await this.findByEmail(updateUserDto.email);
-      if (existingUser) {
-        throw new ConflictException('The email is already in use');
-      }
-    }
-
-    let hashedPassword = user.password;
+    let hashedPassword = currentUser.password;
     if (updateUserDto.password) {
       hashedPassword = await hashText(updateUserDto.password);
     }
@@ -76,26 +71,14 @@ export class UserService {
         password: hashedPassword,
       },
     });
-    const { password, createdAt, updatedAt, ...updatedUserData } = updatedUser;
+
+    const {
+      password: _,
+      createdAt,
+      updatedAt,
+      ...updatedUserData
+    } = updatedUser;
     return updatedUserData;
-  }
-
-  async findByEmail(email: string) {
-    if (!email) {
-      throw new BadRequestException('E-mail is required.');
-    }
-    return await this.prisma.user.findUnique({
-      where: { email },
-    });
-  }
-
-  async findById(id: number) {
-    if (!id || typeof id === 'string') {
-      throw new BadRequestException('Invalid ID');
-    }
-    return await this.prisma.user.findUnique({
-      where: { id },
-    });
   }
 
   async findAll(): Promise<UserFromJwt[]> {
@@ -112,23 +95,17 @@ export class UserService {
   }
 
   async deleteUser(id: number, currentUser: User) {
-    if (!id || typeof id === 'string') {
-      throw new BadRequestException('Invalid ID');
-    }
-    const user = await this.findById(id);
-    if (!user || user.id != currentUser.id) {
-      throw new NotFoundException('User not found');
-    }
+    this.validateUserId(id);
+    await this.checkUserExists(id, currentUser);
+
     await this.prisma.user.delete({
-      where: { id: user.id },
+      where: { id },
     });
   }
 
   async recoverPassword(email: string) {
     const user = await this.findByEmail(email);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    this.checkUserExists(user.id); // Assuming checkUserExists validates user existence
 
     const questions = await this.prisma.secretQuestion.findMany({
       where: {
@@ -145,9 +122,7 @@ export class UserService {
 
   async verifySecretAnswer(verifySecretAnswerDto: VerifySecretAnswerDto) {
     const user = await this.findByEmail(verifySecretAnswerDto.email);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    this.checkUserExists(user.id); // Assuming checkUserExists validates user existence
 
     const answer = await this.prisma.secretAnswer.findUnique({
       where: {
@@ -173,9 +148,7 @@ export class UserService {
 
   async resetPassword(resetPasswordDto: ResetPasswordDto) {
     const user = await this.findByEmail(resetPasswordDto.email);
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+    this.checkUserExists(user.id); // Assuming checkUserExists validates user existence
 
     const hashedPassword = await hashText(resetPasswordDto.newPassword);
 
@@ -185,5 +158,55 @@ export class UserService {
     });
 
     return { message: 'Password reset successfully' };
+  }
+
+  async findByEmail(email: string) {
+    if (!email) {
+      throw new BadRequestException('E-mail is required.');
+    }
+    return await this.prisma.user.findUnique({
+      where: { email },
+    });
+  }
+
+  async findById(id: number) {
+    this.validateUserId(id);
+    return await this.prisma.user.findUnique({
+      where: { id },
+    });
+  }
+
+  private async checkForExistingUser(email: string) {
+    const existingUser = await this.findByEmail(email);
+    if (existingUser) {
+      throw new ConflictException('The email is already in use');
+    }
+  }
+
+  private validateSecretAnswers(secretAnswers: SecretQuestion[]) {
+    if (!secretAnswers || secretAnswers.length !== 3) {
+      throw new BadRequestException('Three secret questions are required.');
+    }
+
+    const questionIds = new Set(
+      secretAnswers.map((answer) => answer.questionId),
+    );
+    if (questionIds.size !== secretAnswers.length) {
+      throw new BadRequestException('Secret question IDs must be unique.');
+    }
+  }
+
+  private async checkUserExists(id: number, currentUser?: User) {
+    const user = await this.findById(id);
+    if (!user || (currentUser && user.id !== currentUser.id)) {
+      throw new NotFoundException('User not found');
+    }
+    return user;
+  }
+
+  private validateUserId(id: number) {
+    if (!id || typeof id !== 'number') {
+      throw new BadRequestException('Invalid user ID');
+    }
   }
 }
