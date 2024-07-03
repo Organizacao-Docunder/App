@@ -1,13 +1,12 @@
 import {
   Body,
-  ConflictException,
-  BadRequestException,
   Controller,
   Delete,
   Get,
   Param,
   Patch,
   Post,
+  Res,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,6 +19,7 @@ import { SecretQuestion } from './interfaces/SecretQuestion';
 import { RecoverPasswordDto } from './dto/recover-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { VerifySecretAnswerDto } from './dto/verify-secret-answer.dto';
+import { Response } from 'express';
 
 @Controller('user')
 export class UserController {
@@ -75,16 +75,18 @@ export class UserController {
   async verifySecretAnswer(
     @Body() verifySecretAnswerDto: VerifySecretAnswerDto,
     @CheckJson() data: any,
+    @Res() response: Response,
   ) {
-    return this.userService.verifySecretAnswer(verifySecretAnswerDto);
+    return this.userService.verifySecretAnswer(verifySecretAnswerDto, response);
   }
 
-  @IsPublic()
   @Post('reset-password')
   async resetPassword(
     @Body() resetPasswordDto: ResetPasswordDto,
     @CheckJson() data: any,
+    @CurrentUser() currentUser: User,
   ) {
-    return this.userService.resetPassword(resetPasswordDto);
+    console.log(currentUser);
+    return this.userService.resetPassword(resetPasswordDto, currentUser);
   }
 }

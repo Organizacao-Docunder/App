@@ -1,8 +1,10 @@
 import {
   BadRequestException,
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
+  forwardRef,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -15,9 +17,16 @@ import { SecretQuestion } from './interfaces/SecretQuestion';
 import { compareText, hashText } from 'src/utils/bcrypt-utils';
 import { hashSecretQuestions } from 'src/utils/hashSecretQuestions';
 
+import { AuthService } from 'src/auth/auth.service';
+import { Response } from 'express';
+
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
+  ) {}
 
   async createUser(
     createUserDto: CreateUserDto,
@@ -105,7 +114,7 @@ export class UserService {
 
   async recoverPassword(email: string) {
     const user = await this.findByEmail(email);
-    this.checkUserExists(user.id); // Assuming checkUserExists validates user existence
+    this.checkUserExists(user.id);
 
     const questions = await this.prisma.secretQuestion.findMany({
       where: {
@@ -120,9 +129,12 @@ export class UserService {
     return questions;
   }
 
-  async verifySecretAnswer(verifySecretAnswerDto: VerifySecretAnswerDto) {
+  async verifySecretAnswer(
+    verifySecretAnswerDto: VerifySecretAnswerDto,
+    response: Response,
+  ) {
     const user = await this.findByEmail(verifySecretAnswerDto.email);
-    this.checkUserExists(user.id); // Assuming checkUserExists validates user existence
+    this.checkUserExists(user.id);
 
     const answer = await this.prisma.secretAnswer.findUnique({
       where: {
@@ -143,12 +155,25 @@ export class UserService {
       throw new BadRequestException('Incorrect answer');
     }
 
-    return { message: 'Answer verified. Proceed to reset password.' };
+    const tempToken = await this.authService.generateTemporaryToken(
+      user,
+      response,
+    );
+
+    return {
+      message:
+        'Answer verified. Temporary token generated. Proceed to reset password.',
+      tempToken,
+    };
   }
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto) {
+  async resetPassword(resetPasswordDto: ResetPasswordDto, currentUser: User) {
+    if (resetPasswordDto.email !== currentUser.email) {
+      await this.checkForExistingUser(resetPasswordDto.email);
+    }
+
     const user = await this.findByEmail(resetPasswordDto.email);
-    this.checkUserExists(user.id); // Assuming checkUserExists validates user existence
+    await this.checkUserExists(user.id, currentUser);
 
     const hashedPassword = await hashText(resetPasswordDto.newPassword);
 
@@ -175,11 +200,14 @@ export class UserService {
       where: { id },
     });
   }
+
   // Regras de verificação
   private async checkForExistingUser(email: string) {
     const existingUser = await this.findByEmail(email);
     if (existingUser) {
       throw new ConflictException('The email is already in use');
+    } else {
+      throw new BadRequestException('The email is invalid, please try later');
     }
   }
 
