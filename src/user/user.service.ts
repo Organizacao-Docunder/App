@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   ConflictException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -207,7 +208,7 @@ export class UserService {
     if (existingUser) {
       throw new ConflictException('The email is already in use');
     } else {
-      throw new BadRequestException('The email is invalid, please try later');
+      throw new ForbiddenException('The email is invalid, please try later');
     }
   }
 
