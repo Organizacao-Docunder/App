@@ -8,7 +8,6 @@ import { ConfigModule } from '@nestjs/config';
 import { Module } from '@nestjs/common';
 import { DocumentModule } from './document/document.module';
 
-
 @Module({
   imports: [UserModule, AuthModule, ConfigModule.forRoot(), DocumentModule],
   controllers: [AppController],

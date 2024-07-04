@@ -1,13 +1,17 @@
 import { User } from '../entities/user.entity';
 import {
-  IsAlpha,
+  IsArray,
   IsEmail,
   IsNotEmpty,
   IsString,
   Matches,
   MaxLength,
   MinLength,
+  ValidateNested,
 } from 'class-validator';
+import { SecretQuestion } from '../interfaces/SecretQuestion';
+import { Type } from 'class-transformer';
+import { CreateSecretQuestionsDto } from './create-questions.dto';
 
 export class CreateUserDto extends User {
   @IsNotEmpty()
@@ -32,4 +36,10 @@ export class CreateUserDto extends User {
     message: 'The name should only contain letters and spaces.',
   })
   name: string;
+
+  @IsArray()
+  @IsNotEmpty()
+  @ValidateNested({ each: true })
+  @Type(() => CreateSecretQuestionsDto)
+  secretAnswers: CreateSecretQuestionsDto[];
 }
