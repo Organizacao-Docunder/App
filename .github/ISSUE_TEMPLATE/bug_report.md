@@ -11,6 +11,7 @@ assignees: ''
 Título simples e objetivo do problema. Imagine como um super resumo do problema.
 Também deverá ser o título da issue, precedido pela tag [BUG]
 Ex: [BUG] Campo 'nome' aceitando valores numéricos na página de cadastro.
+teste pr
 
 ## Prioridade
 Prioridade da resolução do bug. Escolha entre uma
