@@ -1,0 +1,44 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  password      String
+  name          String
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  secretAnswers SecretAnswer[]
+}
+
+model SecretQuestion {
+  id           Int            @id @default(autoincrement())
+  question     String
+  secretAnswer SecretAnswer[]
+}
+
+model SecretAnswer {
+  id              Int            @id @default(autoincrement())
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          Int
+  secretQuestion  SecretQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  questionId      Int
+  encryptedAnswer String
+  createdAt       DateTime       @default(now())
+
+  @@unique([userId, questionId])
+}
+
+model Document {
+  id        Int      @id @default(autoincrement())
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
