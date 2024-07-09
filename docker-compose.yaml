@@ -8,14 +8,13 @@ volumes:
   users-postgres:
 
 services:
-          usersdb:
-                  image: postgres:16.2
-                  container_name: db-users
+          docunder-db:
+                  image: postgres:16.2-alpine
+                  container_name: docunder-db
                   restart: always
                   shm_size: 128mb
                   volumes:
                     - "users-postgres:/var/lib/postgresql/data"
-                    - "./sql:/docker-entrypoint-initdb.d"
                   networks:
                     - "app-network"
                   environment:
@@ -30,15 +29,15 @@ services:
           app:
                   build:
                       context: "./"
-                      dockerfile: dockerfile-app
-                  container_name: app
+                      dockerfile: Dockerfile.prod
+                  container_name: docunder-backend
                   restart: always
                   networks:
                     - "app-network"
                   ports:
                     - "3000:3000"
                   depends_on:
-                    - "usersdb"
+                    - "docunder-db"
                   
                     
 
