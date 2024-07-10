@@ -1,43 +1,41 @@
 version: "3.7"
 
 networks:
-  app-network:
+  docunder-network:
     driver: bridge
 
 volumes:
   users-postgres:
 
 services:
-          docunder-db:
-                  image: postgres:16.2-alpine
+          postgres:
+                  image: postgres:16.2-alpine3.19
                   container_name: docunder-db
                   restart: always
                   shm_size: 128mb
                   volumes:
                     - "users-postgres:/var/lib/postgresql/data"
                   networks:
-                    - "app-network"
+                    - docunder-network
                   environment:
                     POSTGRES_USER: ${POSTGRES_USER}
                     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
                     POSTGRES_DB: ${POSTGRES_DB}
-                  env_file:
-                    - .env
                   ports:
-                    - "5432:5432"
+                    - 5432:5432
                     
-          app:
+          backend:
                   build:
                       context: "./"
                       dockerfile: Dockerfile.prod
                   container_name: docunder-backend
                   restart: always
                   networks:
-                    - "app-network"
+                    - docunder-network
                   ports:
-                    - "3000:3000"
+                    - 3000:3000
                   depends_on:
-                    - "docunder-db"
+                    - postgres
                   
                     
 
