@@ -5,23 +5,32 @@ WORKDIR /app
 COPY package*.json ./
 COPY src/prisma ./prisma/
 
-ENV NODE_ENV=production
+# ENV NODE_ENV production
 RUN npm ci
 
 COPY . .
 RUN npm run build
 
-FROM node:20.11.1-alpine AS production
+FROM builder AS production
+
+WORKDIR /app
 
 RUN addgroup -g 1001 -S production
 RUN adduser -S backend -u 1001
 USER backend
 
 COPY --from=builder --chown=backend:production /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./prisma
+COPY --from=builder --chown=backend:production /app/package*.json ./
+COPY --from=builder --chown=backend:production /app/dist ./dist
+COPY --from=builder --chown=backend:production /app/prisma ./prisma
+
+# RUN rm -rf node_modules/.cache/ \
+# && rm -rf node_modules/@prisma/engines/ \
+# && rm -rf node_modules/@prisma/engines-version \
+# && rm -rf node_modules/prisma \
+# && rm -rf /root/.cache
 
 EXPOSE 3000
 
-CMD ["npm", "run", "start:migrate:prod"]
+CMD ["npm", "run", "start:docker"]
+# CMD [ "node", "app/dist/src/main"]
