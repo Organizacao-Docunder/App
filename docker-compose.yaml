@@ -36,11 +36,12 @@ services:
         dockerfile: Dockerfile.dev
     container_name: docunder-backend
     restart: always
+    command: ./docker-entrypoint.sh
     networks:
       - docunder-network
       - db-network
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@${DB_HOST}:${DB_PORT}/${POSTGRES_DB}?schema=public"
+      DATABASE_URL: ${DATABASE_URL}
       JWT_SECRET: ${JWT_SECRET}
       NODE_ENV: ${NODE_ENV}
     ports:

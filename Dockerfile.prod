@@ -3,34 +3,36 @@ FROM node:20.11.1-alpine AS builder
 WORKDIR /app
 
 COPY package*.json ./
+COPY tsconfig.json ./
 COPY src/prisma ./prisma/
 
-# ENV NODE_ENV production
 RUN npm ci
 
-COPY . .
-RUN npm run build
+COPY ./src ./src
 
-FROM builder AS production
+RUN npx prisma generate \
+  && npm run build
 
+RUN rm -rf ./node_modules/@prisma \
+  && rm -rf ./node_modules/prisma \
+  && rm -rf /root/.cache/ \
+  && npm prune --omit=dev 
+
+FROM node:20.11.1-alpine AS prod
 WORKDIR /app
 
 RUN addgroup -g 1001 -S production
 RUN adduser -S backend -u 1001
-USER backend
 
+COPY --chown=backend:production package*.json ./
+COPY --chown=backend:production tsconfig.json ./
 COPY --from=builder --chown=backend:production /app/node_modules ./node_modules
-COPY --from=builder --chown=backend:production /app/package*.json ./
 COPY --from=builder --chown=backend:production /app/dist ./dist
-COPY --from=builder --chown=backend:production /app/prisma ./prisma
+COPY --from=builder --chown=backend:production /app/prisma ./src/prisma
 
-# RUN rm -rf node_modules/.cache/ \
-# && rm -rf node_modules/@prisma/engines/ \
-# && rm -rf node_modules/@prisma/engines-version \
-# && rm -rf node_modules/prisma \
-# && rm -rf /root/.cache
+COPY --chown=backend:production docker-entrypoint.sh ./
 
+USER backend
 EXPOSE 3000
 
-CMD ["npm", "run", "start:docker"]
-# CMD [ "node", "app/dist/src/main"]
+CMD ["node", "dist/src/main.js"]
