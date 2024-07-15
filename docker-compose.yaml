@@ -33,7 +33,6 @@ services:
   backend:
     build:
         context: "./"
-        dockerfile: Dockerfile.dev
     container_name: docunder-backend
     restart: always
     command: ./docker-entrypoint.sh
@@ -41,25 +40,38 @@ services:
       - docunder-network
       - db-network
     environment:
-      DATABASE_URL: ${DATABASE_URL}
-      JWT_SECRET: ${JWT_SECRET}
-      NODE_ENV: ${NODE_ENV}
+      - DATABASE_URL
+      - JWT_SECRET
+      - NODE_ENV
     ports:
       - 3000:3000
       - 5555:5555
+    develop:
+      # watch:
+      #   - action: sync+restart
+      #     path: ./src
+      #     target: /app/src
     depends_on:
       - postgres
 
   frontend:
     build:
         context: "../frontend-app/"
-        dockerfile: Dockerfile.dev
     container_name: docunder-frontend
+    # command: npm run start
     restart: always
     networks:
       - docunder-network
+    environment:
+      - BACKEND_HOST=backend
+      - PORT=3001
+      - WATCHPACK_POLLING=true
     ports:
       - 3001:3001
+    # volumes:
+    #   - /nextjs-app/:/app
+    #   - /app/node_modules
+    #   - /app/.next
     depends_on:
       - backend
                     
