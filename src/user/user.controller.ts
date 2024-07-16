@@ -86,7 +86,6 @@ export class UserController {
     @CheckJson() data: any,
     @CurrentUser() currentUser: User,
   ) {
-    console.log(currentUser);
     return this.userService.resetPassword(resetPasswordDto, currentUser);
   }
 }
