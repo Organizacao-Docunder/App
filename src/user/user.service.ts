@@ -115,6 +115,9 @@ export class UserService {
 
   async recoverPassword(email: string) {
     const user = await this.findByEmail(email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     this.checkUserExists(user.id);
 
     const questions = await this.prisma.secretQuestion.findMany({
@@ -135,6 +138,9 @@ export class UserService {
     response: Response,
   ) {
     const user = await this.findByEmail(verifySecretAnswerDto.email);
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
     this.checkUserExists(user.id);
 
     const answer = await this.prisma.secretAnswer.findUnique({
