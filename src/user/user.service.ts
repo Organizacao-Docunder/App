@@ -171,6 +171,7 @@ export class UserService {
   async resetPassword(resetPasswordDto: ResetPasswordDto, currentUser: User) {
     if (resetPasswordDto.email !== currentUser.email) {
       await this.checkForExistingUser(resetPasswordDto.email);
+      throw new ForbiddenException('The email is invalid, please try later');
     }
 
     const user = await this.findByEmail(resetPasswordDto.email);
@@ -207,8 +208,6 @@ export class UserService {
     const existingUser = await this.findByEmail(email);
     if (existingUser) {
       throw new ConflictException('The email is already in use');
-    } else {
-      throw new ForbiddenException('The email is invalid, please try later');
     }
   }
 
