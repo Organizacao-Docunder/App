@@ -46,11 +46,6 @@ services:
     ports:
       - 3000:3000
       - 5555:5555
-    develop:
-      # watch:
-      #   - action: sync+restart
-      #     path: ./src
-      #     target: /app/src
     depends_on:
       - postgres
 
@@ -58,20 +53,15 @@ services:
     build:
         context: "../frontend-app/"
     container_name: docunder-frontend
-    # command: npm run start
     restart: always
     networks:
       - docunder-network
     environment:
-      - BACKEND_HOST=backend
+      - API_ENDPOINT
+      - API_PORT
       - PORT=3001
-      - WATCHPACK_POLLING=true
     ports:
       - 3001:3001
-    # volumes:
-    #   - /nextjs-app/:/app
-    #   - /app/node_modules
-    #   - /app/.next
     depends_on:
       - backend
                     
