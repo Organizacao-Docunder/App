@@ -8,6 +8,12 @@
 ALTER TABLE "SecretAnswer" DROP COLUMN "updatedAt";
 
 INSERT INTO "SecretQuestion" (question) VALUES
-('What is your mother''s maiden name?'),
-('What was the name of your first pet?'),
-('What was the name of your elementary school?');
+('Qual seu animal favorito?'),
+('Em qual cidade você nasceu?'),
+('Qual sua cor favorita?'),
+('Qual seu número da sorte?'),
+('Qual foi seu primeiro emprego?'),
+('Qual foi a sua fruta favorita?'),
+('Qual foi o seu esporte favorito?'),
+('Qual foi o seu time favorito?'),
+('Qual foi a sua comida favorita?');
