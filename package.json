@@ -1,10 +1,18 @@
 {
-  "name": "base-system",
+  "name": "docunder",
   "version": "0.0.1",
-  "description": "",
-  "author": "",
+  "description": "Docunder is a platform for technical documentation of hardware, software, and methodologies, aiming to be collaborative and lightweight. It can be used by a server for institution-controlled access, allowing for the creation, editing, sharing and efficient organization of technical documents.",
+  "author": "Docunder Team",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Organizacao-Docunder/App.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Organizacao-Docunder/App/issues"
+  },
+  "homepage": "https://github.com/Organizacao-Docunder/App#readme",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -21,6 +29,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@nestjs/cli": "^10.0.0",
     "@nestjs/common": "^10.0.0",
     "@nestjs/config": "^3.2.0",
     "@nestjs/core": "^10.0.0",
@@ -44,7 +53,6 @@
     "rxjs": "^7.8.1"
   },
   "devDependencies": {
-    "@nestjs/cli": "^10.0.0",
     "@nestjs/schematics": "^10.0.0",
     "@nestjs/testing": "^10.0.0",
     "@types/bcrypt": "^5.0.2",
