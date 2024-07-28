@@ -36,7 +36,8 @@ COPY --from=builder /app/prisma ./src/prisma
 
 COPY --chown=backend:production docker-entrypoint.sh ./
 
-# USER backend
-EXPOSE 3000
+USER backend
+EXPOSE ${PORT}
+EXPOSE ${DB_PORT}
 
 CMD ["node", "dist/src/main.js"]
