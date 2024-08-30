@@ -63,5 +63,17 @@ declare namespace Cypress {
     gui_fillSecretQuestionFormAndSubmit(
       secretAnswer?: SecretAnswer,
     ): void | Cypress.Chainable<null>;
+
+    /**
+     * Logs into Docunder via the Application Programming Interface (API).
+     *
+     * @param params Object - The credentials for login
+     * @param params.email string - The email of the user you want to log in with
+     * @param params.password string - The password of the user you want to log in with
+     *
+     * @example cy.api_login() // Logs into the app using the default email and password (defined as envs)
+     * @example cy.api_Login({ email: 'user@email.com', password: 'myPassword' }) // Logs into the app using the provided credentials
+     */
+    api_login(params?: LoginParams): Chainable<Response>;
   }
 }
