@@ -10,7 +10,9 @@ export default defineConfig({
       apiUrl: 'http://localhost:3000',
     },
     experimentalRunAllSpecs: true,
+    specPattern: 'cypress/tests/**/*.cy.{js,jsx,ts,tsx}',
   },
   video: false,
   chromeWebSecurity: false,
+  scrollBehavior: false,
 });
