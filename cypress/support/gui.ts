@@ -6,6 +6,11 @@ Cypress.Commands.add(
     email = Cypress.env('USER_EMAIL'),
     password = Cypress.env('USER_PASSWORD'),
   } = {}) => {
+    Cypress.log({
+      displayName: 'LOGIN',
+      message: [`🔐 Authenticating | ${email}`],
+    });
+
     cy.intercept('POST', '**/login').as('auth');
 
     cy.get('input[name="email"]').type(email);

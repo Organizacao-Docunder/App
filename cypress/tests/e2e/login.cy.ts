@@ -1,4 +1,4 @@
-describe('Login on Docunder', () => {
+describe('Login on Docunder using the Graphic User Interface', () => {
   beforeEach(() => {
     cy.visit('/login');
   });
