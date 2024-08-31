@@ -1,4 +1,4 @@
-describe('Create a new account on Docunder', () => {
+describe('Create a new account on Docunder using the GUI', () => {
   beforeEach(() => {
     cy.visit('/signup');
   });

@@ -1,7 +1,4 @@
-describe('Login on Docunder using the Graphic User Interface', () => {
-  beforeEach(() => {
-    cy.visit('/login');
-  });
+describe('Login on Docunder using the GUI', () => {
   it('sucessfully logs in', () => {
     cy.gui_login();
     cy.contains('h3', 'Início').should('be.visible');

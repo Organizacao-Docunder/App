@@ -3,10 +3,10 @@ describe('Login on Docunder using the API ', () => {
     cy.api_login().then((response) => {
       expect(response.status).to.equal(200);
       expect(response.headers).to.have.property('set-cookie');
-      const accessTokenCookie = response.headers['set-cookie'].find((cookie) =>
+      const accessToken = response.headers['set-cookie'].find((cookie) =>
         cookie.startsWith('access_token='),
       );
-      expect(accessTokenCookie).to.exist;
+      expect(accessToken).to.exist;
     });
   });
 
