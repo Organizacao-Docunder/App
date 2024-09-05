@@ -49,6 +49,7 @@ describe('Create a new account on Docunder using the GUI', () => {
           .should('be.visible');
       });
     });
+
     describe('Secret Answer Page', () => {
       it('try to create an account with all empty fields', () => {
         cy.gui_fillSignupFormAndSubmit();
@@ -89,6 +90,7 @@ describe('Terms of Service and Privacy Police', () => {
     cy.get('@btnToS').should('be.visible');
     cy.get('@btnToS').click();
   });
+
   it('should open the modal and be visible', () => {
     cy.get('h3').contains('Termos e condições de uso').should('be.visible');
   });

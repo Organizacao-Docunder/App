@@ -74,6 +74,7 @@ describe('Create a new account on Docunder using the API', () => {
       cy.api_createNewUser({ name, email, password });
       cy.sessionLogin({ email, password });
     });
+
     describe('POST /user', () => {
       it('try to create User with empty name', () => {
         cy.api_createNewUser({
@@ -171,6 +172,7 @@ describe('Create a new account on Docunder using the API', () => {
           expect(response.status).to.equal(400);
         });
       });
+
       it('try to update User with invalid name', () => {
         cy.request({
           method: 'PATCH',
@@ -187,6 +189,7 @@ describe('Create a new account on Docunder using the API', () => {
           expect(response.status).to.equal(400);
         });
       });
+
       it('try to update User with invalid email', () => {
         cy.request({
           method: 'PATCH',
@@ -203,6 +206,7 @@ describe('Create a new account on Docunder using the API', () => {
           expect(response.status).to.equal(400);
         });
       });
+
       it('try to update User with empty name', () => {
         cy.request({
           method: 'PATCH',
@@ -219,6 +223,7 @@ describe('Create a new account on Docunder using the API', () => {
           expect(response.status).to.equal(400);
         });
       });
+
       it('try to update User with empty email', () => {
         cy.request({
           method: 'PATCH',
@@ -235,6 +240,7 @@ describe('Create a new account on Docunder using the API', () => {
           expect(response.status).to.equal(400);
         });
       });
+
       it('try to update User with empty body', () => {
         cy.request({
           method: 'PATCH',
@@ -248,6 +254,7 @@ describe('Create a new account on Docunder using the API', () => {
           expect(response.status).to.equal(400);
         });
       });
+
       it('try to update User with already used email', () => {
         cy.request({
           method: 'PATCH',
