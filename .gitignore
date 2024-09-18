@@ -19,6 +19,11 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 
+# Cypress
+cypress/screenshots
+cypress/videos
+cypress/downloads
+
 # IDEs and editors
 /.idea
 .project
@@ -41,6 +46,7 @@ lerna-debug.log*
 .env.test.local
 .env.production.local
 .env.local
+cypress.env.json
 
 # temp directory
 .temp
