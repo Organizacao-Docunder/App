@@ -1,4 +1,4 @@
-name: Run Tests on Dev Branch
+name: Run Tests on Main Branch
 
 on:
   push:
