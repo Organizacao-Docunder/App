@@ -20,7 +20,7 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "start:docker": "prisma generate && prisma migrate deploy && node dist/src/main",
+    "db:migrate": "prisma generate && prisma migrate dev",
     "lint": "eslint \"{src,apps,libs,test,cypress}/**/*.ts\"",
     "lint:fix": "eslint \"{src,apps,libs,test,cypress}/**/*.ts\" --fix",
     "test": "jest",
@@ -107,6 +107,7 @@
     "testEnvironment": "node"
   },
   "prisma": {
-    "schema": "./src/prisma/schema.prisma"
+    "schema": "./src/prisma/schema.prisma",
+    "seed": "ts-node src/prisma/seed.ts"
   }
 }
