@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from '@prisma/client';
 import { hashText } from '../utils/bcrypt-utils';
 import { hashSecretQuestions } from '../utils/hashSecretQuestions';
 
@@ -28,8 +28,10 @@ async function seed() {
   });
 }
 
-seed().then(() => {
-  console.log("🌱 Database seeded!")
-}).finally(() => {
-  prisma.$disconnect();
-})
+seed()
+  .then(() => {
+    console.log('🌱 Database seeded!');
+  })
+  .finally(() => {
+    prisma.$disconnect();
+  });
