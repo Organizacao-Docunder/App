@@ -1,0 +1,87 @@
+name: Run Tests on Main Branch
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+    types: [opened, reopened, edited]
+
+jobs:
+  eslint-and-cypress-tests:
+    runs-on: ubuntu-22.04
+
+    env:
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      NODE_ENV: development
+      DATABASE_URL: 'postgresql://postgres:postgres@localhost:5432/postgres?schema=public'
+      API_ENDPOINT: localhost
+      API_PORT: 3000
+      CYPRESS_USER_EMAIL: 'bianca@email.com'
+      CYPRESS_USER_PASSWORD: 'Str3ss&Test'
+
+    services:
+      postgres:
+        image: postgres:16.2-alpine3.19
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+
+    steps:
+      - name: Checkout Backend
+        uses: actions/checkout@v4
+        with:
+          path: backend
+
+      - name: Install Backend Dependencies
+        run: npm ci
+        working-directory: backend
+        
+      - name: Run ESLint
+        run: npm run lint
+        working-directory: backend
+
+      - name: Wait for Postgres
+        run: wget -qO- https://raw.githubusercontent.com/eficode/wait-for/v2.2.4/wait-for | sh -s -- localhost:5432
+
+      - name: Migrate Database
+        run: |
+          npx prisma generate 
+          npx prisma migrate deploy
+        working-directory: backend
+
+      - name: Seed the database
+        run: npx prisma db seed
+        working-directory: backend
+
+      - name: Starts Backend
+        run: npm run start &
+        working-directory: backend
+
+      - name: Checkout Frontend
+        uses: actions/checkout@v4
+        with:
+          repository: Organizacao-Docunder/frontend-app
+          ref: main
+          path: frontend
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+        working-directory: frontend/nextjs-app 
+
+      - name: Build Frontend
+        run: npm run dev &
+        working-directory: frontend/nextjs-app
+
+      - name: Run end-to-end tests on Cypress
+        uses: cypress-io/github-action@v6
+        with:
+          install: false
+          command: npm run cypress
+          wait-on: 'http://localhost:3001'
+          working-directory: backend

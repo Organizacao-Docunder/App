@@ -1,4 +1,4 @@
-name: CI
+name: Builds Docker Image & Push to Docker Hub
 on:
   push:
     branches:
@@ -34,5 +34,6 @@ jobs:
           rodrigomolter/docunder-api:latest
 
     - name: Trigger Deploy
+      if: success()
       run: |
         curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
