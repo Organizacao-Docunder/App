@@ -7,4 +7,4 @@ echo "Migrating the databse..."
 npx prisma migrate deploy
 
 echo "Starting the server..."
-node dist/src/main.js
+node dist/main.js

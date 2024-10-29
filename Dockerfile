@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY package*.json ./
 COPY tsconfig.json ./
-COPY src/prisma ./prisma/
+COPY src/prisma ./src/prisma/
 
 RUN npm ci
 
@@ -18,9 +18,7 @@ RUN npm prune --omit=dev \
 
 RUN rm -rf /app/node_modules/@prisma/engines/ 
 RUN rm -rf /app/node_modules/@prisma/engines-version
-RUN rm -rf /app/node_modules/prisma 
-RUN rm -rf /home/backend/.npm
-RUN rm -rf /home/backend/.cache/
+RUN rm -rf /app/node_modules/prisma
 
 FROM node:20.11.1-alpine AS prod
 WORKDIR /app
@@ -32,7 +30,6 @@ COPY package*.json ./
 COPY tsconfig.json ./
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/prisma ./src/prisma
 
 COPY --chown=backend:production docker-entrypoint.sh ./
 
@@ -40,4 +37,4 @@ USER backend
 EXPOSE ${PORT}
 EXPOSE ${DB_PORT}
 
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "dist/main.js"]
