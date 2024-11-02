@@ -29,6 +29,7 @@ RUN adduser -S backend -u 1001
 COPY package*.json ./
 COPY tsconfig.json ./
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/src/prisma ./dist/prisma
 COPY --from=builder /app/dist ./dist
 
 COPY --chown=backend:production docker-entrypoint.sh ./
