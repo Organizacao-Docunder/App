@@ -35,7 +35,7 @@ services:
         context: "./"
     container_name: docunder-backend
     restart: always
-    command: ./docker-entrypoint.sh
+    command: sh /app/docker-entrypoint.sh
     networks:
       - docunder-network
       - db-network
