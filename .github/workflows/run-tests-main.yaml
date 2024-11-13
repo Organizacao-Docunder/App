@@ -64,7 +64,7 @@ jobs:
         working-directory: backend
 
       - name: Starts Backend
-        run: npm run start:prod
+        run: npm run start:prod &
         working-directory: backend
 
       - name: Checkout Frontend
