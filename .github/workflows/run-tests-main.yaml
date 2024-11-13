@@ -59,8 +59,12 @@ jobs:
         run: npx prisma db seed
         working-directory: backend
 
+      - name: Build Backend
+        run: npm run build
+        working-directory: backend
+
       - name: Starts Backend
-        run: npm run start &
+        run: npm run start:prod
         working-directory: backend
 
       - name: Checkout Frontend
@@ -75,7 +79,11 @@ jobs:
         working-directory: frontend/nextjs-app 
 
       - name: Build Frontend
-        run: npm run dev &
+        run: npm run build
+        working-directory: frontend/nextjs-app
+
+      - name: Start Frontend
+        run: npm run start &
         working-directory: frontend/nextjs-app
 
       - name: Run end-to-end tests on Cypress
@@ -85,3 +93,19 @@ jobs:
           command: npm run cypress
           wait-on: 'http://localhost:3001'
           working-directory: backend
+
+  build-dockerimage:
+    name: 'Builds Docker Image'
+    runs-on: ubuntu-latest
+    steps: 
+    - name: Checkout
+      uses: actions/checkout@v4
+
+
+    - name: Builds Docker image
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        push: false
+        tags: |
+          rodrigomolter/docunder-api:latest
