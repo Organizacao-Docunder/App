@@ -26,45 +26,45 @@ services:
       interval: 30s
       timeout: 60s
       retries: 5
-      start_period: 80s  
+      start_period: 80s
     ports:
       - ${DB_PORT}:5432
-            
-  backend:
-    build:
-        context: "./"
-    container_name: docunder-backend
-    restart: always
-    command: ./docker-entrypoint.sh
-    networks:
-      - docunder-network
-      - db-network
-    environment:
-      - DATABASE_URL
-      - JWT_SECRET
-      - NODE_ENV
-    ports:
-      - 3000:3000
-      - 5555:5555
-    depends_on:
-      - postgres
 
-  frontend:
-    build:
-        context: "../frontend-app/"
-    container_name: docunder-frontend
-    restart: always
-    networks:
-      - docunder-network
-    environment:
-      - API_ENDPOINT
-      - API_PORT
-      - PORT=3001
-    ports:
-      - 3001:3001
-    depends_on:
-      - backend
-                    
+  # backend:
+  #   build:
+  #       context: "./"
+  #   container_name: docunder-backend
+  #   restart: always
+  #   command: ./docker-entrypoint.sh
+  #   networks:
+  #     - docunder-network
+  #     - db-network
+  #   environment:
+  #     - DATABASE_URL
+  #     - JWT_SECRET
+  #     - NODE_ENV
+  #   ports:
+  #     - 3000:3000
+  #     - 5555:5555
+  #   depends_on:
+  #     - postgres
 
-                          
-                    
+  # frontend:
+  #   build:
+  #       context: "../frontend-app/"
+  #   container_name: docunder-frontend
+  #   restart: always
+  #   networks:
+  #     - docunder-network
+  #   environment:
+  #     - API_ENDPOINT
+  #     - API_PORT
+  #     - PORT=3001
+  #   ports:
+  #     - 3001:3001
+  #   depends_on:
+  #     - backend
+
+
+
+

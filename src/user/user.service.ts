@@ -44,6 +44,7 @@ export class UserService {
         email: createUserDto.email,
         password: hashedPassword,
         name: createUserDto.name,
+        acceptedTerms: createUserDto.acceptedTerms,
         secretAnswers: {
           create: hashedAnswer.map((answer) => ({
             questionId: answer.questionId,
