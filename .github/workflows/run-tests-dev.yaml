@@ -78,12 +78,13 @@ jobs:
         run: npm ci
         working-directory: frontend/nextjs-app 
 
-      - name: Build Frontend
-        run: npm run build
-        working-directory: frontend/nextjs-app
+      # - name: Build Frontend
+      #   run: npm run build
+      #   working-directory: frontend/nextjs-app
 
       - name: Start Frontend
-        run: npm run start &
+        # run: npm run start &
+        run: npm run dev &
         working-directory: frontend/nextjs-app
 
       - name: Run end-to-end tests on Cypress
