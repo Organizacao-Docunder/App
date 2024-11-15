@@ -33,6 +33,10 @@ export class UserService {
     createUserDto: CreateUserDto,
     secretAnswers: SecretQuestion[],
   ) {
+    if (!createUserDto.acceptedTerms) {
+      throw new BadRequestException('Terms of use must be accepted!');
+    }
+
     await this.checkForExistingUser(createUserDto.email);
     this.validateSecretAnswers(secretAnswers);
 
