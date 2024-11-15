@@ -1,7 +1,9 @@
 import { User } from '../entities/user.entity';
 import {
   IsArray,
+  IsBoolean,
   IsEmail,
+  IsIn,
   IsNotEmpty,
   IsString,
   Matches,
@@ -36,6 +38,11 @@ export class CreateUserDto extends User {
     message: 'The name should only contain letters and spaces.',
   })
   name: string;
+
+  @IsBoolean()
+  @IsIn([true, false])
+  @IsNotEmpty()
+  acceptedTerms: boolean;
 
   @IsArray()
   @IsNotEmpty()

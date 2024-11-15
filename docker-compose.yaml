@@ -26,10 +26,10 @@ services:
       interval: 30s
       timeout: 60s
       retries: 5
-      start_period: 80s  
+      start_period: 80s
     ports:
       - ${DB_PORT}:5432
-            
+
   backend:
     build:
         context: "./"
@@ -64,7 +64,7 @@ services:
       - 3001:3001
     depends_on:
       - backend
-                    
 
-                          
-                    
+
+
+
