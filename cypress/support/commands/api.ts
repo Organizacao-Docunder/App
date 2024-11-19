@@ -33,6 +33,7 @@ Cypress.Commands.add(
         memorable: false,
         prefix: 'A1a@',
       }),
+      acceptTermsOfUse = true,
     } = {},
     {
       answer1 = faker.animal.dog(),
@@ -47,6 +48,7 @@ Cypress.Commands.add(
         name,
         email,
         password,
+        acceptedTerms: acceptTermsOfUse,
         secretAnswers: [
           {
             questionId: 1,

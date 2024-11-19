@@ -16,6 +16,7 @@ declare namespace Cypress {
     name?: string;
     email?: string;
     password?: string;
+    acceptTermsOfUse?: boolean;
   };
 
   interface Chainable<Subject> {
