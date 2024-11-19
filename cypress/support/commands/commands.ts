@@ -6,8 +6,8 @@ Cypress.Commands.add(
   } = {}) => {
     const login = () =>
       cy.api_login({ email, password }).then((response) => {
-        let accessToken = response.headers['set-cookie'].find((cookie) =>
-          cookie.startsWith('access_token='),
+        let accessToken: string = response.headers['set-cookie'].find(
+          (cookie: string) => cookie.startsWith('access_token='),
         );
         accessToken = accessToken.split(';')[0];
         cy.setCookie('ACCESS_TOKEN', accessToken, {

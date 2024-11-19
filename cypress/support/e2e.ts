@@ -1,4 +1,4 @@
 import 'cypress-plugin-api';
-import './commands';
-import './gui';
-import './api';
+import './commands/commands';
+import './commands/gui';
+import './commands/api';
