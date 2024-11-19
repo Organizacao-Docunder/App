@@ -48,6 +48,16 @@ describe('Create a new account on Docunder using the GUI', () => {
           .contains('Confirmação de senha incorreta.')
           .should('be.visible');
       });
+
+      it('continue button should be disabled when not checking Terms of Use', () => {
+        cy.contains('button', 'Continuar').should('be.disabled');
+
+        cy.get('#termsOfUse').check();
+        cy.contains('button', 'Continuar').should('not.be.disabled');
+
+        cy.get('#termsOfUse').uncheck();
+        cy.contains('button', 'Continuar').should('be.disabled');
+      });
     });
 
     describe('Secret Answer Page', () => {
