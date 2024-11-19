@@ -95,7 +95,7 @@ describe('Terms of Service and Privacy Police', () => {
   beforeEach(() => {
     cy.visit('/signup');
     cy.get('span')
-      .contains('Termos de Uso e das Políticas de privacidade')
+      .contains('Termos de Uso e Políticas de privacidade')
       .as('btnToS');
     cy.get('@btnToS').should('be.visible');
     cy.get('@btnToS').click();
