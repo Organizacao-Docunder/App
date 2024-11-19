@@ -41,7 +41,7 @@ describe('Create a new account on Docunder using the GUI', () => {
         cy.get('input[name="matchPassword"').type('T3sting@123', {
           log: false,
         });
-
+        cy.get('#termsOfUse').check();
         cy.contains('button', 'Continuar').click();
 
         cy.get('p')
@@ -92,11 +92,8 @@ describe('Terms of Service and Privacy Police', () => {
   });
 
   it('should open the modal and be visible', () => {
-    cy.get('h3').contains('Termos e condições de uso').should('be.visible');
-  });
-
-  it('should have a close button', () => {
-    cy.get('h3').contains('Termos e condições de uso').as('tosHeader');
+    cy.get('h3').contains('Termos e Condições de Uso').should('be.visible');
     cy.get('button').contains('Fechar').should('be.visible').click();
+    cy.get('#name').should('be.visible');
   });
 });
