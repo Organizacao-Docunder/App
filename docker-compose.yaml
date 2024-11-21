@@ -11,10 +11,10 @@ services:
   postgres:
     image: postgres:16.2-alpine3.19
     container_name: docunder-db
-    restart: always
+    restart: on-failure:3
     shm_size: 128mb
     volumes:
-      - "users-postgres:/var/lib/postgresql/data"
+      - 'users-postgres:/var/lib/postgresql/data'
     networks:
       - db-network
     environment:
@@ -22,7 +22,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     healthcheck:
-      test: "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"
+      test: 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'
       interval: 30s
       timeout: 60s
       retries: 5
@@ -32,9 +32,9 @@ services:
 
   backend:
     build:
-        context: "./"
+      context: './'
     container_name: docunder-backend
-    restart: always
+    restart: on-failure:3
     command: sh /app/docker-entrypoint.sh
     networks:
       - docunder-network
@@ -51,9 +51,9 @@ services:
 
   frontend:
     build:
-        context: "../frontend-app/"
+      context: '../frontend-app/'
     container_name: docunder-frontend
-    restart: always
+    restart: on-failure:3
     networks:
       - docunder-network
     environment:
@@ -64,7 +64,3 @@ services:
       - 3001:3001
     depends_on:
       - backend
-
-
-
-
