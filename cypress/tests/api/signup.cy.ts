@@ -153,6 +153,17 @@ describe('Create a new account on Docunder using the API', () => {
           );
         });
       });
+
+      it('try to create a User without accepting the Terms of Use', () => {
+        cy.api_createNewUser({
+          acceptTermsOfUse: false,
+        }).then((response) => {
+          expect(response.status).to.equal(400);
+          expect(response.body.message).to.include(
+            'Terms of use must be accepted!',
+          );
+        });
+      });
     });
 
     describe('PATCH /user', () => {

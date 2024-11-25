@@ -31,11 +31,13 @@ Cypress.Commands.add(
       memorable: false,
       prefix: 'A1a@',
     }),
+    acceptTermsOfUse = true,
   } = {}) => {
     cy.get('#name').type(name);
     cy.get('#email').type(email);
     cy.get('#password').type(password, { log: false });
     cy.get('input[name="matchPassword"').type(password, { log: false });
+    if (acceptTermsOfUse) cy.get('#termsOfUse').check();
     cy.contains('button', 'Continuar').click();
   },
 );

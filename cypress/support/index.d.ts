@@ -16,18 +16,21 @@ declare namespace Cypress {
     name?: string;
     email?: string;
     password?: string;
+    acceptTermsOfUse?: boolean;
   };
 
   interface Chainable<Subject> {
     /**
      * Logs into Docunder via the graphical user interface (GUI).
      *
-     * @param credentials Object - The credentials for login
-     * @param credentials.email string - The email of the user you want to log in with
-     * @param credentials.password string - The password of the user you want to log in with
+     * @param credentials The credentials for login
      *
-     * @example cy.gui_login() // Logs into the app using the default email and password (defined as envs)
-     * @example cy.gui_Login({ email: 'user@email.com', password: 'myPassword' }) // Logs into the app using the provided credentials
+     * @example
+     * // Logs into the app using the default email and password (defined as envs)
+     * cy.gui_login()
+     *
+     * // Logs into the app using the provided credentials
+     * cy.gui_Login({ email: 'user@email.com', password: 'myPassword' })
      */
     gui_login(credentials?: LoginParams): void | Cypress.Chainable<null>;
 
@@ -35,13 +38,13 @@ declare namespace Cypress {
      * Fills in first part of the signup form and submits it with the provided credentials.
      * If no info was given, it will use fake data in the inputs.
      *
-     * @param userDetails Object - The credentials for signup
-     * @param userDetails.name string - The name of the user being signed up
-     * @param userDetails.email string - The email of a still not signed up user
-     * @param userDetails.password string - The password for the user being signed up
+     * @param userDetails Object - The credentials for fill the signup form
      *
-     * @example cy.gui_fillSignupFormAndSubmit() // email = Romenia_Slive@hotmail.com, password = A1a@XSLRKI5X
-     * @example cy.gui_fillSignupFormAndSubmit({ email: 'user@example.com', password: 'sEcR37-p@s5w0rD' }) // email = user@example.com, password = sEcR37-p@s5w0rD
+     * @example
+     *  //Fill the form with fake data
+     *  cy.gui_fillSignupFormAndSubmit()
+     *  //Fill the form with the given data
+     *  cy.gui_fillSignupFormAndSubmit({ email: 'user@example.com', password: 'sEcR37-p@s5w0rD' })
      */
     gui_fillSignupFormAndSubmit(
       userDetails?: SignupFormParams,
@@ -53,12 +56,13 @@ declare namespace Cypress {
      * If no info was given, it will use fake data in the inputs.
      *
      * @param secretAnswer Object - The secretAnswers for signup
-     * @param secretAnswer.answer1 string - The answer for the first question
-     * @param secretAnswer.answer2 string - The answer for the second question
-     * @param secretAnswer.answer3 string - The answer for the third question
      *
-     * @example cy.gui_fillSignupFormAndSubmit() // answer1 = cat, answer2 = Paris, answer3 = red
-     * @example cy.gui_fillSignupFormAndSubmit({ answer1: bethoven}) // answer1 = bethoven, answer2 = Recife, answer3 = cyan
+     * @example
+     * //answer1 = cat, answer2 = Paris, answer3 = red
+     * cy.gui_fillSignupFormAndSubmit()
+     *
+     * //answer1 = bethoven, answer2 = Recife, answer3 = cyan
+     * cy.gui_fillSignupFormAndSubmit({ answer1: bethoven})
      */
     gui_fillSecretQuestionFormAndSubmit(
       secretAnswer?: SecretAnswer,
@@ -69,11 +73,13 @@ declare namespace Cypress {
      * If no info was given, it will use fake data in the inputs.
      *
      * @param credentials Object - The credentials for login
-     * @param credentials.email string - The email of the user you want to log in with
-     * @param credentials.password string - The password of the user you want to log in with
      *
-     * @example cy.api_login() // Logs into the app using the default email and password (defined as envs)
-     * @example cy.api_Login({ email: 'user@email.com', password: 'myPassword' }) // Logs into the app using the provided credentials
+     * @example
+     * //Logs into the app using the default email and password (defined as envs)
+     * cy.api_login()
+     *
+     * //Logs into the app using the provided credentials
+     * cy.api_Login({ email: 'user@email.com', password: 'myPassword' })
      */
     api_login(credentials?: LoginParams): Chainable<Response>;
 
@@ -83,27 +89,29 @@ declare namespace Cypress {
      * If no info was given, it will use fake data in the inputs.
      *
      * @param credentials Object - The credentials for login
-     * @param credentials.email string - The email of the user you want to log in with
-     * @param credentials.password string - The password of the user you want to log in with
      *
-     * @example cy.sessionLogin() // Logs into the app using the default email and password (defined as envs)
-     * @example cy.sessionLogin({ email: 'user@email.com', password: 'myPassword' }) // Logs into the app using the provided credentials
+     * @example
+     * //Logs into the app using the default email and password (defined as envs)
+     * cy.sessionLogin()
+     *
+     * //Logs into the app using the provided credentials
+     * cy.sessionLogin({ email: 'user@email.com', password: 'myPassword' })
      */
     sessionLogin(credentials?: LoginParams): Chainable<Response>;
+
     /**
      * Creates a new user in Docunder using the API
      * If no info was given, it will use fake data in the inputs.
      *
-     * @param userDetails Object - The credentials for signup
-     * @param userDetails.name string - The name of the user being signed up
-     * @param userDetails.email string - The email of a still not signed up user
-     * @param userDetails.password string - The password for the user being signed up
+     * @param userDetails The credentials for signup
+     * @param secretAnswer The secretAnswers for signup
      *
-     * @param secretAnswer Object - The secretAnswers for signup
-     * @param secretAnswer.answer1 string - The answer for the first question
-     * @param secretAnswer.answer2 string - The answer for the second question
-     * @param secretAnswer.answer3 string - The answer for the third question
+     * @example
+     * //Create a new user with fake data
+     * cy.api_createNewUser()
      *
+     * //Create a new user with the given data. The missing inputs will be used fake data
+     * cy.api_createNewUser({ name: 'Bianca' }, { answer1: 'dog' });
      */
     api_createNewUser(
       userDetails?: SignupFormParams,

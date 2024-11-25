@@ -41,12 +41,22 @@ describe('Create a new account on Docunder using the GUI', () => {
         cy.get('input[name="matchPassword"').type('T3sting@123', {
           log: false,
         });
-
+        cy.get('#termsOfUse').check();
         cy.contains('button', 'Continuar').click();
 
         cy.get('p')
           .contains('Confirmação de senha incorreta.')
           .should('be.visible');
+      });
+
+      it('continue button should be disabled when not checking Terms of Use', () => {
+        cy.contains('button', 'Continuar').should('be.disabled');
+
+        cy.get('#termsOfUse').check();
+        cy.contains('button', 'Continuar').should('not.be.disabled');
+
+        cy.get('#termsOfUse').uncheck();
+        cy.contains('button', 'Continuar').should('be.disabled');
       });
     });
 
@@ -85,18 +95,15 @@ describe('Terms of Service and Privacy Police', () => {
   beforeEach(() => {
     cy.visit('/signup');
     cy.get('span')
-      .contains('Termos de Uso e das Políticas de privacidade')
+      .contains('Termos de Uso e Políticas de privacidade')
       .as('btnToS');
     cy.get('@btnToS').should('be.visible');
     cy.get('@btnToS').click();
   });
 
   it('should open the modal and be visible', () => {
-    cy.get('h3').contains('Termos e condições de uso').should('be.visible');
-  });
-
-  it('should have a close button', () => {
-    cy.get('h3').contains('Termos e condições de uso').as('tosHeader');
+    cy.get('h3').contains('Termos e Condições de Uso').should('be.visible');
     cy.get('button').contains('Fechar').should('be.visible').click();
+    cy.get('#name').should('be.visible');
   });
 });
